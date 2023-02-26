@@ -27,7 +27,7 @@ class Training:
     LEN_STEP: float = 0.65
     M_IN_KM: int = 1000
     MIN_IN_H: int = 60
-    KMH_IN_MS: float = 0.277
+    KMH_IN_MS: float = 0.278
 
     def __init__(self,
                  action: int,
@@ -85,6 +85,7 @@ class SportsWalking(Training):
     COLORIES_COEF_WEIGHT_2: float = 0.029
     EXPONENT: int = 2
     SM_IN_M: int = 100
+    KMH_IN_MSEC: float = 0.278
 
     def __init__(self,
                  action: int,
@@ -96,7 +97,8 @@ class SportsWalking(Training):
 
     def get_spent_calories(self) -> float:
         return (((self.COLORIES_COEF_WEIGHT_1 * self.weight)
-                + (((self.get_mean_speed() * self.KMH_IN_MS) ** self.EXPONENT)
+                + (((self.get_mean_speed() * self.KMH_IN_MSEC)
+                    ** self.EXPONENT)
                 / (self.height / self.SM_IN_M))
                 * self.COLORIES_COEF_WEIGHT_2 * self.weight)
                 * (self.duration * self.MIN_IN_H))
