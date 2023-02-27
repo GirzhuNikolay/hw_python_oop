@@ -15,10 +15,10 @@ class InfoMessage:
     def get_message(self) -> str:
         return (
             f'Тип тренировки: {self.training_type}; '
-            f'Длительность: {"{:.3f}".format(self.duration)} ч.; '
-            f'Дистанция: {"{:.3f}".format(self.distance)} км; '
-            f'Ср. скорость: {"{:.3f}".format(self.speed)} км/ч; '
-            f'Потрачено ккал: {"{:.3f}".format(self.calories)}.'
+            f'Длительность: {self.duration:.3f} ч.; '
+            f'Дистанция: {self.distance:.3f} км; '
+            f'Ср. скорость: {self.speed:.3f} км/ч; '
+            f'Потрачено ккал: {self.calories:.3f}.'
         )
 
 
@@ -27,7 +27,6 @@ class Training:
     LEN_STEP: float = 0.65
     M_IN_KM: int = 1000
     MIN_IN_H: int = 60
-    KMH_IN_MS: float = 0.278
 
     def __init__(self,
                  action: int,
@@ -81,8 +80,8 @@ class Running(Training):
 
 class SportsWalking(Training):
     """Тренировка: спортивная ходьба."""
-    COLORIES_COEF_WEIGHT_1: float = 0.035
-    COLORIES_COEF_WEIGHT_2: float = 0.029
+    CALORIES_WEIGHT_MULTIPLIER_1: float = 0.035
+    COLORIES_WEIGHT_MULTIPLIER_2: float = 0.029
     EXPONENT: int = 2
     SM_IN_M: int = 100
     KMH_IN_MSEC: float = 0.278
@@ -96,11 +95,11 @@ class SportsWalking(Training):
         self.height = height
 
     def get_spent_calories(self) -> float:
-        return (((self.COLORIES_COEF_WEIGHT_1 * self.weight)
+        return (((self.CALORIES_WEIGHT_MULTIPLIER_1 * self.weight)
                 + (((self.get_mean_speed() * self.KMH_IN_MSEC)
                     ** self.EXPONENT)
                 / (self.height / self.SM_IN_M))
-                * self.COLORIES_COEF_WEIGHT_2 * self.weight)
+                * self.COLORIES_WEIGHT_MULTIPLIER_2 * self.weight)
                 * (self.duration * self.MIN_IN_H))
 
 
@@ -130,13 +129,15 @@ class Swimming(Training):
                 * self.duration)
 
 
-def read_package(workout_type: str, data: list) -> Training:
+def read_package(workout_type: str, data: list[float]) -> Training:
     """Прочитать данные полученные от датчиков."""
     sensors = {
         'SWM': Swimming,
         'RUN': Running,
         'WLK': SportsWalking
     }
+    if workout_type not in sensors:
+        raise ValueError('Тип тренировки не определён: {workout_type}')
     return sensors[workout_type](*data)
 
 
