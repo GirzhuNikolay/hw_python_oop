@@ -137,7 +137,7 @@ def read_package(workout_type: str, data: list) -> Training:
         'WLK': SportsWalking
     }
     if workout_type not in sensors:
-        raise ValueError('Тип тренировки не определён: {workout_type}')
+        raise ValueError(f'Тип тренировки не определён: {workout_type}')
     return sensors[workout_type](*data)
 
 
